@@ -519,20 +519,19 @@ var ArpPlayer = function () {
   };
 
   ArpPlayer.prototype._drawKeyboard = function _drawKeyboard() {
-    var _this3 = this;
 
     var octaves = [2, 3, 4, 5, 6, 7];
     var keyboard = document.createElement('section');
     keyboard.classList.add('keyboard');
     this.container.appendChild(keyboard);
     octaves.forEach(function (octave) {
-      _this3.MS.dict.keys.forEach(function (key) {
+      this.MS.dict.keys.forEach(function (key) {
         var el = document.createElement('div');
         var classname = key.replace('#', 'is') + octave;
         el.classList.add(classname);
         keyboard.appendChild(el);
-      });
-    });
+      }.bind(this));
+    }.bind(this));
   };
 
   ArpPlayer.prototype._drawOutput = function _drawOutput() {
@@ -543,8 +542,6 @@ var ArpPlayer = function () {
   };
 
   ArpPlayer.prototype._updateOutput = function _updateOutput() {
-    var _this4 = this;
-
     this.output.innerHTML = '';
     var title = document.createElement('h1');
     title.innerHTML = 'Output';
@@ -553,16 +550,14 @@ var ArpPlayer = function () {
     description.innerHTML = this.MS.key + ' ' + this.MS._scale.name;
     this.output.appendChild(description);
     this.chords.forEach(function (chord) {
-      var note = _this4.MS.notes[chord];
+      var note = this.MS.notes[chord];
       var el = document.createElement('span');
       el.innerHTML = note.note.replace('#', '<sup>♯</sup>') + ' <small>' + note.triad.type + '</small>';
-      _this4.output.appendChild(el);
-    });
+      this.output.appendChild(el);
+    }.bind(this));
   };
 
   ArpPlayer.prototype._loadBPMSelector = function _loadBPMSelector() {
-    var _this5 = this;
-
     var bpm_container = document.createElement('section');
     bpm_container.classList.add('bpm');
     this.aside.appendChild(bpm_container);
@@ -573,17 +568,16 @@ var ArpPlayer = function () {
     [45, 60, 75, 90, 105, 120, 135, 150].forEach(function (bpm) {
       var el = document.createElement('div');
       el.setAttribute('data-value', bpm);
-      if (bpm === _this5.player.bpm) el.classList.add('bpm-current');
+      if (bpm === this.player.bpm) el.classList.add('bpm-current');
       el.innerHTML = bpm;
       el.addEventListener('click', function (e) {
-        _this5.playerUpdateBPM(e);
-      });
+        this.playerUpdateBPM(e);
+      }.bind(this));
       bpm_container.appendChild(el);
-    });
+    }.bind(this));
   };
 
   ArpPlayer.prototype._loadChordSelector = function _loadChordSelector() {
-    var _this6 = this;
 
     this.chord_container = document.createElement('section');
     this.chord_container.classList.add('chord');
@@ -596,26 +590,26 @@ var ArpPlayer = function () {
       var el = e.target;
       var chord = el.getAttribute('data-chord');
       var value = el.getAttribute('data-value');
-      _this6.chords[parseInt(chord)] = value;
-      _this6._utilClassToggle(e.target, 'chord-' + chord + '-current');
-      _this6._updateOutput();
-    };
+      this.chords[parseInt(chord)] = value;
+      this._utilClassToggle(e.target, 'chord-' + chord + '-current');
+      this._updateOutput();
+    }.bind(this);
 
     var _loop3 = function _loop3(c) {
       var chord_el = document.createElement('div');
-      _this6.MS.notes.forEach(function (note, i) {
+      this.MS.notes.forEach(function (note, i) {
         var el = document.createElement('div');
         el.setAttribute('data-value', i);
         el.setAttribute('data-chord', c);
-        if (i === _this6.chords[c]) el.classList.add('chord-' + c + '-current');
+        if (i === this.chords[c]) el.classList.add('chord-' + c + '-current');
         el.innerHTML = 'i ii iii iv v vi vii'.split(' ')[i];
         el.addEventListener('click', function (e) {
-          _this6.msUpdateChords(e);
-        });
+          this.msUpdateChords(e);
+        }.bind(this));
         chord_el.appendChild(el);
-      });
-      _this6.chord_container.appendChild(chord_el);
-    };
+      }.bind(this));
+      this.chord_container.appendChild(chord_el);
+    }.bind(this);
 
     for (var c = 0; c < this.chord_count; c++) {
       _loop3(c);
@@ -634,8 +628,6 @@ var ArpPlayer = function () {
   };
 
   ArpPlayer.prototype._loadKeySelector = function _loadKeySelector() {
-    var _this7 = this;
-
     var key_container = document.createElement('section');
     key_container.classList.add('keys');
     this.container.appendChild(key_container);
@@ -646,18 +638,16 @@ var ArpPlayer = function () {
     this.MS.dict.keys.forEach(function (key) {
       var el = document.createElement('div');
       el.setAttribute('data-value', key);
-      if (key === _this7.ms_key) el.classList.add('key-current');
+      if (key === this.ms_key) el.classList.add('key-current');
       el.innerHTML = key;
       el.addEventListener('click', function (e) {
-        _this7.msUpdateKey(e);
-      });
+        this.msUpdateKey(e);
+      }.bind(this));
       key_container.appendChild(el);
-    });
+    }.bind(this));
   };
 
   ArpPlayer.prototype._loadModeSelector = function _loadModeSelector() {
-    var _this8 = this;
-
     var mode_container = document.createElement('section');
     mode_container.classList.add('modes');
     this.container.appendChild(mode_container);
@@ -668,18 +658,16 @@ var ArpPlayer = function () {
     this.MS.dict.modes.forEach(function (mode) {
       var el = document.createElement('div');
       el.setAttribute('data-value', mode);
-      if (mode === _this8.ms_mode) el.classList.add('mode-current');
+      if (mode === this.ms_mode) el.classList.add('mode-current');
       el.innerHTML = mode;
       el.addEventListener('click', function (e) {
-        _this8.msUpdateMode(e);
-      });
+        this.msUpdateMode(e);
+      }.bind(this));
       mode_container.appendChild(el);
-    });
+    }.bind(this));
   };
 
   ArpPlayer.prototype._loadTypeSelector = function _loadTypeSelector() {
-    var _this9 = this;
-
     var type_container = document.createElement('section');
     type_container.classList.add('type');
     this.container.appendChild(type_container);
@@ -690,18 +678,16 @@ var ArpPlayer = function () {
     ['straight', 'looped'].forEach(function (step) {
       var el = document.createElement('div');
       el.setAttribute('data-value', step);
-      if (step === _this9.ap_pattern_type) el.classList.add('type-current');
+      if (step === this.ap_pattern_type) el.classList.add('type-current');
       el.innerHTML = step;
       el.addEventListener('click', function (e) {
-        _this9.apUpdatePatternType(e);
-      });
+        this.apUpdatePatternType(e);
+      }.bind(this));
       type_container.appendChild(el);
-    });
+    }.bind(this));
   };
 
   ArpPlayer.prototype._loadStepsSelector = function _loadStepsSelector() {
-    var _this10 = this;
-
     var steps_container = document.createElement('section');
     steps_container.classList.add('steps');
     this.container.appendChild(steps_container);
@@ -712,13 +698,13 @@ var ArpPlayer = function () {
     [3, 4, 5, 6].forEach(function (step) {
       var el = document.createElement('div');
       el.setAttribute('data-value', step);
-      if (step === _this10.ap_steps) el.classList.add('step-current');
+      if (step === this.ap_steps) el.classList.add('step-current');
       el.innerHTML = step;
       el.addEventListener('click', function (e) {
-        _this10.apUpdateSteps(e);
-      });
+        this.apUpdateSteps(e);
+      }.bind(this));
       steps_container.appendChild(el);
-    });
+    }.bind(this));
   };
 
   ArpPlayer.prototype._loadPatternSelector = function _loadPatternSelector() {
@@ -729,8 +715,6 @@ var ArpPlayer = function () {
   };
 
   ArpPlayer.prototype._updatePatternSelector = function _updatePatternSelector() {
-    var _this11 = this;
-
     this.pattern_container.innerHTML = '';
     // reset if the id is over
     this.ap_pattern_id = this.ap_pattern_id > this.AP.patterns[this.ap_pattern_type].length - 1 ? 0 : this.ap_pattern_id;
@@ -740,20 +724,20 @@ var ArpPlayer = function () {
     this.pattern_container.appendChild(title);
     var patterns = this.AP.patterns[this.ap_pattern_type];
     [720, 120, 24, 6].forEach(function (count) {
-      _this11.pattern_container.classList.remove('patterns-' + count);
-    });
+      this.pattern_container.classList.remove('patterns-' + count);
+    }.bind(this));
     this.pattern_container.classList.add('patterns-' + patterns.length);
     patterns.forEach(function (pattern, i) {
       var el = document.createElement('div');
       el.setAttribute('data-value', i);
-      if (i === _this11.ap_pattern_id) el.classList.add('id-current');
+      if (i === this.ap_pattern_id) el.classList.add('id-current');
       el.innerHTML = pattern.join('');
-      el.appendChild(_this11._genPatternSvg(pattern));
+      el.appendChild(this._genPatternSvg(pattern));
       el.addEventListener('click', function (e) {
-        _this11.apUpdatePatternId(e);
-      });
-      _this11.pattern_container.appendChild(el);
-    });
+        this.apUpdatePatternId(e);
+      }.bind(this));
+      this.pattern_container.appendChild(el);
+    }.bind(this));
   };
 
   ArpPlayer.prototype._genPatternSvg = function _genPatternSvg(pattern) {
@@ -781,52 +765,48 @@ var ArpPlayer = function () {
   };
 
   ArpPlayer.prototype._setMusicalScale = function _setMusicalScale() {
-    var _this12 = this;
-
     this.MS = new MusicalScale({ key: this.ms_key, mode: this.ms_mode });
     this.msUpdateKey = function (e) {
-      _this12._utilClassToggle(e.target, 'key-current');
-      _this12.ms_key = e.target.getAttribute('data-value');
-      _this12.msUpdateScale();
-    };
+      this._utilClassToggle(e.target, 'key-current');
+      this.ms_key = e.target.getAttribute('data-value');
+      this.msUpdateScale();
+    }.bind(this);
     this.msUpdateMode = function (e) {
-      _this12._utilClassToggle(e.target, 'mode-current');
-      _this12.ms_mode = e.target.getAttribute('data-value');
-      _this12.msUpdateScale();
-      _this12._updateChords();
-    };
+      this._utilClassToggle(e.target, 'mode-current');
+      this.ms_mode = e.target.getAttribute('data-value');
+      this.msUpdateScale();
+      this._updateChords();
+    }.bind(this);
     this.msUpdateScale = function () {
-      _this12.MS.updateScale({ key: _this12.ms_key, mode: _this12.ms_mode });
-      _this12._updateOutput();
-    };
+      this.MS.updateScale({ key: this.ms_key, mode: this.ms_mode });
+      this._updateOutput();
+    }.bind(this);
   };
 
   ArpPlayer.prototype._setArpeggioPatterns = function _setArpeggioPatterns() {
-    var _this13 = this;
-
     this.AP = new ArpeggioPatterns({ steps: this.ap_steps });
     this.apUpdateSteps = function (e) {
-      _this13._utilClassToggle(e.target, 'step-current');
+      this._utilClassToggle(e.target, 'step-current');
       var steps = e.target.getAttribute('data-value');
-      _this13.ap_steps = parseInt(steps);
-      _this13.AP.updatePatterns({ steps: steps });
-      _this13.apUpdate();
-      _this13._updatePatternSelector();
-    };
+      this.ap_steps = parseInt(steps);
+      this.AP.updatePatterns({ steps: steps });
+      this.apUpdate();
+      this._updatePatternSelector();
+    }.bind(this);
     this.apUpdatePatternType = function (e) {
-      _this13._utilClassToggle(e.target, 'type-current');
-      _this13.ap_pattern_type = e.target.getAttribute('data-value');
-      _this13.apUpdate();
-      _this13._updatePatternSelector();
-    };
+      this._utilClassToggle(e.target, 'type-current');
+      this.ap_pattern_type = e.target.getAttribute('data-value');
+      this.apUpdate();
+      this._updatePatternSelector();
+    }.bind(this);
     this.apUpdatePatternId = function (e) {
-      _this13._utilClassToggle(e.target, 'id-current');
-      _this13.ap_pattern_id = parseInt(e.target.getAttribute('data-value'));
-      _this13.apUpdate();
-    };
+      this._utilClassToggle(e.target, 'id-current');
+      this.ap_pattern_id = parseInt(e.target.getAttribute('data-value'));
+      this.apUpdate();
+    }.bind(this);
     this.apUpdate = function () {
-      _this13.arpeggio = _this13.AP.patterns[_this13.ap_pattern_type][_this13.ap_pattern_id];
-    };
+      this.arpeggio = this.AP.patterns[this.ap_pattern_type][this.ap_pattern_id];
+    }.bind(this);
     this.apUpdate();
   };
 
@@ -834,7 +814,8 @@ var ArpPlayer = function () {
     var curr = document.querySelectorAll('.' + classname);
     for (var i = 0; i < curr.length; i++) {
       curr[i].classList.remove(classname);
-    }el.classList.add(classname);
+    }
+    el.classList.add(classname);
   };
 
   /**
