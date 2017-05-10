@@ -8,12 +8,12 @@ console.clear();
  * generate a scale of music
  * http://codepen.io/jakealbaugh/pen/NrdEYL/
  *
- * @param key {String} 
+ * @param key {String}
      the root of the key. flats will be converted to sharps.
        C, C#, D, D#, E, F, F#, G, G#, A, A#, B
- * @param mode {String} 
+ * @param mode {String}
      desired mode.
-       ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian, 
+       ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian,
      can also pass in:
        major, minor, melodic, harmonic
  *
@@ -340,8 +340,6 @@ var ArpeggioPatterns = function () {
 
 var ArpPlayer = function () {
   function ArpPlayer(params) {
-    var _this = this;
-
     _classCallCheck(this, ArpPlayer);
 
     this._utilActiveNoteClassToggle = function (note_classes, classname) {
@@ -391,9 +389,9 @@ var ArpPlayer = function () {
 
     // change tabs, pause player
     document.addEventListener('visibilitychange', function () {
-      _this.player.playing = true;
-      _this.playerToggle();
-    });
+      this.player.playing = true;
+      this.playerToggle();
+    }.bind(this));
 
     console.log(this.MS);
   }
@@ -435,28 +433,27 @@ var ArpPlayer = function () {
   };
 
   ArpPlayer.prototype._loadTransport = function _loadTransport() {
-    var _this2 = this;
 
     this.playerUpdateBPM = function (e) {
       var el = e.target;
       var bpm = el.getAttribute('data-value');
-      _this2.player.bpm = parseInt(bpm);
-      Tone.Transport.bpm.value = _this2.player.bpm;
-      _this2._utilClassToggle(e.target, 'bpm-current');
-    };
+      this.player.bpm = parseInt(bpm);
+      Tone.Transport.bpm.value = this.player.bpm;
+      this._utilClassToggle(e.target, 'bpm-current');
+    }.bind(this);
 
     this.playerToggle = function () {
-      if (_this2.player.playing) {
+      if (this.player.playing) {
         Tone.Transport.pause();
-        _this2.channel.master.gain.value = 0;
-        _this2.play_toggle.classList.remove('active');
+        this.channel.master.gain.value = 0;
+        this.play_toggle.classList.remove('active');
       } else {
         Tone.Transport.start();
-        _this2.channel.master.gain.value = 1;
-        _this2.play_toggle.classList.add('active');
+        this.channel.master.gain.value = 1;
+        this.play_toggle.classList.add('active');
       }
-      _this2.player.playing = !_this2.player.playing;
-    };
+      this.player.playing = !this.player.playing;
+    }.bind(this);
 
     this.play_toggle = document.createElement('button');
     this.play_toggle.innerHTML = '<span class="play">Play</span><span class="pause">Pause</span>';
@@ -465,19 +462,19 @@ var ArpPlayer = function () {
       Tone.startMobile();
     });
     this.play_toggle.addEventListener('click', function (e) {
-      _this2.playerToggle();
-    });
+      this.playerToggle();
+    }.bind(this));
 
     Tone.Transport.bpm.value = this.player.bpm;
     Tone.Transport.scheduleRepeat(function (time) {
-      var curr_chord = _this2.player.chord_step % _this2.chord_count;
+      var curr_chord = this.player.chord_step % this.chord_count;
 
       var prev = document.querySelector('.chord > div.active');
       if (prev) prev.classList.remove('active');
       var curr = document.querySelector('.chord > div:nth-of-type(' + (curr_chord + 1) + ')');
       if (curr) curr.classList.add('active');
 
-      var chord = _this2.MS.notes[_this2.chords[curr_chord]];
+      var chord = this.MS.notes[this.chords[curr_chord]];
 
       // finding the current note
       var notes = chord.triad.notes;
@@ -488,37 +485,37 @@ var ArpPlayer = function () {
         }));
       };
 
-      for (var i = 0; i < Math.ceil(_this2.ap_steps / 3); i++) {
+      for (var i = 0; i < Math.ceil(this.ap_steps / 3); i++) {
         _loop2(i);
       }
-      var note = notes[_this2.arpeggio[_this2.player.step % _this2.arpeggio.length]];
+      var note = notes[this.arpeggio[this.player.step % this.arpeggio.length]];
 
       // setting bass notes
       var bass_o = chord.rel_octave + 2;
       var bass_1 = chord.note + bass_o;
 
       // slappin da bass
-      if (!_this2.player.bass_on) {
-        _this2.player.bass_on = true;
-        _this2.synths.bass.triggerAttack(bass_1, time);
-        _this2._utilActiveNoteClassToggle([bass_1.replace('#', 'is')], 'active-b');
+      if (!this.player.bass_on) {
+        this.player.bass_on = true;
+        this.synths.bass.triggerAttack(bass_1, time);
+        this._utilActiveNoteClassToggle([bass_1.replace('#', 'is')], 'active-b');
       }
 
       // bump the step
-      _this2.player.step++;
+      this.player.step++;
 
       // changing chords
-      if (_this2.player.step % (_this2.arpeggio.length * _this2.player.arp_repeat) === 0) {
-        _this2.player.chord_step++;
-        _this2.player.bass_on = false;
-        _this2.synths.bass.triggerRelease(time);
-        _this2.player.triad_step++;
+      if (this.player.step % (this.arpeggio.length * this.player.arp_repeat) === 0) {
+        this.player.chord_step++;
+        this.player.bass_on = false;
+        this.synths.bass.triggerRelease(time);
+        this.player.triad_step++;
       }
       // arpin'
-      var note_ref = '' + note.note + (note.rel_octave + _this2.player.octave_base);
-      _this2._utilActiveNoteClassToggle([note_ref.replace('#', 'is')], 'active-t');
-      _this2.synths.treb.triggerAttackRelease(note_ref, '16n', time);
-    }, '16n');
+      var note_ref = '' + note.note + (note.rel_octave + this.player.octave_base);
+      this._utilActiveNoteClassToggle([note_ref.replace('#', 'is')], 'active-t');
+      this.synths.treb.triggerAttackRelease(note_ref, '16n', time);
+    }.bind(this), '16n');
   };
 
   ArpPlayer.prototype._drawKeyboard = function _drawKeyboard() {
@@ -840,7 +837,7 @@ var ArpPlayer = function () {
     }el.classList.add(classname);
   };
 
-  /**  
+  /**
   utilActiveNoteClassToggle
   removes all classnames on existing, then adds to an array of note classes
   @param note_classes {Array} [A3, B4]
